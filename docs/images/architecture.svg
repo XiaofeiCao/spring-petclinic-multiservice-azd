@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="880" viewBox="0 0 1360 880"
+  role="img" aria-labelledby="title description">
+  <title id="title">Spring PetClinic Multi-Service on Azure Container Apps and PostgreSQL 16</title>
+  <desc id="description">
+    Browsers and API clients connect over HTTPS to petclinic-web (port 8080, database-free Spring Boot UI
+    with system identity W), which calls petclinic-rest over HTTPS via PETCLINIC_BACKEND_URL (port 9966,
+    Spring Boot REST API with system identity R). Both Container Apps run in one Azure Container Apps
+    environment (with optional /23 VNet subnet), send logs to Log Analytics, and pull private images from
+    Azure Container Registry via registry-scoped AcrPull role assignments for identities W and R. Only
+    petclinic-rest authenticates to Azure Database for PostgreSQL 16 Flexible Server over verified TLS
+    using system identity R mapped to the non-admin petclinic_app role. During postprovision, local
+    provisioning opens an owned temporary all-IPv4 firewall rule, reconciles Entra SQL as the signed-in
+    User, and removes temporary access before readiness.
+  </desc>
+  <defs>
+    <marker id="blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#2673b8"/>
+    </marker>
+    <marker id="green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#2f855a"/>
+    </marker>
+    <marker id="amber" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#b7791f"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #42556e; }
+      .heading { font-weight: bold; fill: #183153; }
+      .sub { fill: #5a6f8a; }
+      .dbtext { fill: #22543d; }
+      .temporary { fill: #8a5a13; }
+      .runtime { fill: none; stroke: #2673b8; stroke-width: 3; marker-end: url(#blue); }
+      .dbrt { fill: none; stroke: #2f855a; stroke-width: 3; marker-end: url(#green); }
+      .transient { fill: none; stroke: #b7791f; stroke-width: 3; stroke-dasharray: 8 6; marker-end: url(#amber); }
+    </style>
+  </defs>
+
+  <!-- Canvas background & header -->
+  <rect width="1360" height="880" fill="#f7f9fc"/>
+  <text x="36" y="48" font-size="29" class="heading">Spring PetClinic Multi-Service on Azure</text>
+  <text x="36" y="78" font-size="16" class="sub">2-module Maven reactor (petclinic-web + petclinic-rest) | Azure Container Apps | System-assigned Managed Identity | Passwordless PostgreSQL 16</text>
+
+  <!-- Resource Group container -->
+  <rect x="225" y="108" width="1105" height="650" rx="18" fill="#ffffff" stroke="#9eb5cf" stroke-width="2"/>
+  <text x="250" y="140" font-size="18" class="heading">Azure Resource Group (rg-&lt;env&gt;)</text>
+
+  <!-- Container Apps Environment container -->
+  <rect x="250" y="162" width="695" height="390" rx="14" fill="#eef6ff" stroke="#8ab6e2" stroke-width="2"/>
+  <text x="274" y="194" font-size="18" class="heading">Azure Container Apps Environment</text>
+  <text x="274" y="218" font-size="13" class="sub">Consumption profile | Public HTTPS ingress | Optional dedicated VNet (/23 subnet)</text>
+
+  <!-- Left external actors -->
+  <rect x="24" y="268" width="170" height="96" rx="12" fill="#ffffff" stroke="#9eb5cf" stroke-width="2"/>
+  <text x="109" y="302" text-anchor="middle" font-size="17" class="heading">Browser / Users</text>
+  <text x="109" y="327" text-anchor="middle" font-size="13">Web UI &amp; JSON BFF</text>
+  <text x="109" y="348" text-anchor="middle" font-size="12" class="sub">Public HTTPS</text>
+
+  <rect x="24" y="500" width="170" height="122" rx="12" fill="#ffffff" stroke="#b7791f" stroke-width="2"/>
+  <text x="109" y="532" text-anchor="middle" font-size="16" class="heading">Local Provisioning</text>
+  <text x="109" y="556" text-anchor="middle" font-size="13">azd + azure.springboot</text>
+  <text x="109" y="578" text-anchor="middle" font-size="13">Postprovision Entra SQL</text>
+  <text x="109" y="600" text-anchor="middle" font-size="12" class="sub">Signed-in User</text>
+
+  <!-- Service 1: Frontend petclinic-web -->
+  <rect x="274" y="250" width="280" height="168" rx="12" fill="#ffffff" stroke="#2673b8" stroke-width="2.5"/>
+  <text x="414" y="282" text-anchor="middle" font-size="18" class="heading">Frontend: petclinic-web</text>
+  <text x="414" y="306" text-anchor="middle" font-size="14">Spring Boot Web UI (port 8080)</text>
+  <text x="414" y="330" text-anchor="middle" font-size="13" class="sub">Database-free Maven module</text>
+  <text x="414" y="356" text-anchor="middle" font-size="14" class="heading">System Identity W</text>
+  <text x="414" y="378" text-anchor="middle" font-size="12" class="sub">uses: [petclinic-rest]</text>
+  <text x="414" y="399" text-anchor="middle" font-size="12" class="sub">Zero database credentials / env</text>
+
+  <!-- Service 2: Backend petclinic-rest -->
+  <rect x="646" y="250" width="280" height="168" rx="12" fill="#ffffff" stroke="#2673b8" stroke-width="2.5"/>
+  <text x="786" y="282" text-anchor="middle" font-size="18" class="heading">Backend: petclinic-rest</text>
+  <text x="786" y="306" text-anchor="middle" font-size="14">Spring Boot REST API (port 9966)</text>
+  <text x="786" y="330" text-anchor="middle" font-size="13" class="sub">Context path: /petclinic</text>
+  <text x="786" y="356" text-anchor="middle" font-size="14" class="heading">System Identity R</text>
+  <text x="786" y="378" text-anchor="middle" font-size="12" class="sub">Profile: azure-postgres,spring-data-jpa</text>
+  <text x="786" y="399" text-anchor="middle" font-size="12" class="sub">Initializes schema &amp; seed data</text>
+
+  <!-- Runtime note inside CAE -->
+  <rect x="274" y="446" width="647" height="82" rx="12" fill="#fff8e8" stroke="#b7791f" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="597" y="476" text-anchor="middle" font-size="16" class="heading">Extension-managed build &amp; deploy ordering</text>
+  <text x="597" y="502" text-anchor="middle" font-size="13">Root mvnw packages both JARs | Generated Java 17 images | petclinic-rest deploys first, injecting SERVICE_PETCLINIC_REST_ENDPOINT_URL into petclinic-web</text>
+
+  <!-- Bottom shared resources: ACR & Log Analytics -->
+  <rect x="250" y="618" width="335" height="106" rx="12" fill="#ffffff" stroke="#2673b8" stroke-width="2"/>
+  <text x="417" y="650" text-anchor="middle" font-size="18" class="heading">Azure Container Registry</text>
+  <text x="417" y="675" text-anchor="middle" font-size="14">Basic SKU | Admin user disabled</text>
+  <text x="417" y="699" text-anchor="middle" font-size="13" class="sub">Scoped AcrPull for Identities W &amp; R</text>
+
+  <rect x="615" y="618" width="330" height="106" rx="12" fill="#ffffff" stroke="#2673b8" stroke-width="2"/>
+  <text x="780" y="650" text-anchor="middle" font-size="18" class="heading">Log Analytics Workspace</text>
+  <text x="780" y="675" text-anchor="middle" font-size="14">Container &amp; system logs</text>
+  <text x="780" y="699" text-anchor="middle" font-size="13" class="sub">Shared across both services</text>
+
+  <!-- Right database column: PostgreSQL 16 + Caller Admin -->
+  <rect x="995" y="232" width="310" height="204" rx="12" fill="#eaf7ed" stroke="#568960" stroke-width="2.5"/>
+  <text x="1150" y="266" text-anchor="middle" font-size="19" class="heading dbtext">PostgreSQL 16</text>
+  <text x="1150" y="291" text-anchor="middle" font-size="14" class="dbtext">Azure Flexible Server (Burstable)</text>
+  <text x="1150" y="318" text-anchor="middle" font-size="13" class="dbtext">Database: petclinic</text>
+  <text x="1150" y="342" text-anchor="middle" font-size="13" class="dbtext">Role petclinic_app -&gt; Identity R only</text>
+  <text x="1150" y="366" text-anchor="middle" font-size="13" class="dbtext">Entra-only (password auth disabled)</text>
+  <text x="1150" y="390" text-anchor="middle" font-size="13" class="dbtext">TLS verify-full required</text>
+  <text x="1150" y="414" text-anchor="middle" font-size="13" class="dbtext">Exact CAE outbound-IP firewall rules</text>
+
+  <rect x="995" y="476" width="310" height="114" rx="12" fill="#fff8e8" stroke="#b7791f" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="1150" y="507" text-anchor="middle" font-size="16" class="heading temporary">Entra Administrator &amp; Bootstrap</text>
+  <text x="1150" y="533" text-anchor="middle" font-size="13">Selected User admin preserved</text>
+  <text x="1150" y="556" text-anchor="middle" font-size="13">Temporary 0.0.0.0/0 rule opened &amp;</text>
+  <text x="1150" y="576" text-anchor="middle" font-size="13">deleted locally during postprovision</text>
+
+  <!-- Runtime connectors -->
+  <!-- Browser -> petclinic-web -->
+  <path d="M194 316 H274" class="runtime"/>
+  <text x="234" y="304" text-anchor="middle" font-size="13" class="heading">HTTPS</text>
+
+  <!-- petclinic-web -> petclinic-rest -->
+  <path d="M554 334 H646" class="runtime"/>
+  <text x="600" y="312" text-anchor="middle" font-size="12" class="heading">HTTPS REST</text>
+  <text x="600" y="328" text-anchor="middle" font-size="11" class="sub">PETCLINIC_BACKEND_URL</text>
+
+  <!-- petclinic-rest -> PostgreSQL 16 -->
+  <path d="M926 334 H995" class="dbrt"/>
+  <text x="960" y="308" text-anchor="middle" font-size="12" class="heading dbtext">JDBC + TLS</text>
+  <text x="960" y="324" text-anchor="middle" font-size="11" class="dbtext">Identity R</text>
+
+  <!-- ACR -> both Container Apps -->
+  <path d="M417 618 V576 H340 V418" class="runtime"/>
+  <path d="M417 576 H715 V418" class="runtime"/>
+  <text x="530" y="596" text-anchor="middle" font-size="13">Private image pull (Identities W &amp; R)</text>
+
+  <!-- CAE -> Log Analytics -->
+  <path d="M780 552 V618" class="runtime"/>
+  <text x="812" y="592" font-size="13">Logs</text>
+
+  <!-- Temporary postprovision SQL path -->
+  <path d="M194 562 H212 V740 H1150 V590" class="transient"/>
+  <path d="M1150 476 V436" class="transient"/>
+  <text x="1150" y="640" text-anchor="middle" font-size="13" class="temporary">Provision-only local SQL over verified TLS</text>
+  <text x="1150" y="660" text-anchor="middle" font-size="12" class="temporary">(No bootstrap Container Apps Job; deploy repeats zero admin SQL)</text>
+
+  <!-- Legend & footer -->
+  <path d="M36 798 H72" fill="none" stroke="#2673b8" stroke-width="3"/>
+  <text x="82" y="803" font-size="14">Persistent HTTP / ACR / logs flow</text>
+
+  <path d="M330 798 H366" fill="none" stroke="#2f855a" stroke-width="3"/>
+  <text x="376" y="803" font-size="14">Managed-identity PostgreSQL runtime flow</text>
+
+  <path d="M680 798 H716" fill="none" stroke="#b7791f" stroke-width="3" stroke-dasharray="8 6"/>
+  <text x="726" y="803" font-size="14">Provision-only temporary bootstrap flow (cleaned up before readiness)</text>
+
+  <text x="36" y="842" font-size="14" class="heading">Key multi-service isolation: petclinic-web has no database dependencies, prompts, or PostgreSQL access; only petclinic-rest maps to petclinic_app.</text>
+</svg>

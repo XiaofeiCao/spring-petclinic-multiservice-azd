@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring PetClinic Portal</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+<header>
+  <div><strong>Spring PetClinic</strong></div>
+  <nav>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/owners}">Owners</a>
+    <a th:href="@{/vets}">Veterinarians</a>
+  </nav>
+</header>
+<main>
+  <section class="card">
+    <h1>Welcome to Spring PetClinic</h1>
+    <p>Multi-service Spring Boot web portal connected to the PetClinic REST API backend.</p>
+    <p>
+      <a class="btn" th:href="@{/owners}">Manage Owners</a>
+      <a class="btn" th:href="@{/vets}" style="margin-left: 0.75rem; background: #0f766e;">View Veterinarians</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>

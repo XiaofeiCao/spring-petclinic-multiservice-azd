@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetClinic Owners</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+<header>
+  <div><strong>Spring PetClinic</strong></div>
+  <nav>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/owners}">Owners</a>
+    <a th:href="@{/vets}">Veterinarians</a>
+  </nav>
+</header>
+<main>
+  <section class="card">
+    <h2>Find Owners</h2>
+    <form method="get" th:action="@{/owners}" style="display: flex; gap: 0.75rem;">
+      <input type="text" name="lastName" placeholder="Filter by last name" th:value="${lastName}" />
+      <button type="submit">Search</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Add Owner</h2>
+    <form method="post" th:action="@{/owners}">
+      <div class="form-grid">
+        <div>
+          <label>First Name</label>
+          <input type="text" name="firstName" required />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" name="lastName" required />
+        </div>
+        <div>
+          <label>Address</label>
+          <input type="text" name="address" required />
+        </div>
+        <div>
+          <label>City</label>
+          <input type="text" name="city" required />
+        </div>
+        <div>
+          <label>Telephone (digits)</label>
+          <input type="text" name="telephone" pattern="[0-9]+" required />
+        </div>
+      </div>
+      <button type="submit">Create Owner</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Owners Directory</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>Telephone</th>
+        <th>Pets</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="owner : ${owners}">
+        <td><a th:href="@{/owners/{id}(id=${owner.id})}" th:text="${owner.firstName + ' ' + owner.lastName}"></a></td>
+        <td th:text="${owner.address}"></td>
+        <td th:text="${owner.city}"></td>
+        <td th:text="${owner.telephone}"></td>
+        <td>
+          <span class="badge" th:each="pet : ${owner.pets}" th:text="${pet.name}"></span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>
