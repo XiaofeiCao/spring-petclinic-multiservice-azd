@@ -1,5 +1,9 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 name: spring-petclinic-multiservice
+
+requiredVersions:
+  azd: ">=1.37.2"
+  extensions:
+    azure.springboot: ">=0.1.0"
 
 infra:
   provider: bicep
@@ -9,36 +13,15 @@ infra:
 services:
   petclinic-rest:
     project: ./petclinic-rest
-    host: containerapp
-    language: docker
+    language: java
+    host: springbootapp
     module: services/petclinic-rest
-    docker:
-      path: Dockerfile
-      context: ..
-      platform: linux/amd64
 
   petclinic-web:
     project: ./petclinic-web
-    host: containerapp
-    language: docker
+    language: java
+    host: springbootapp
     module: services/petclinic-web
     uses:
       - petclinic-rest
-    docker:
-      path: Dockerfile
-      context: ..
-      platform: linux/amd64
 
-hooks:
-  preup:
-    shell: pwsh
-    run: scripts/Prepare-Database.ps1
-    interactive: false
-  preprovision:
-    shell: pwsh
-    run: scripts/Prepare-Database.ps1
-    interactive: false
-  postprovision:
-    shell: pwsh
-    run: scripts/Configure-Database.ps1
-    interactive: false

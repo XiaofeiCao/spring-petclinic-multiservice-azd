@@ -1,6 +1,0 @@
-.git
-.azure
-**/target
-**/.azd-springboot
-.idea
-.vscode
